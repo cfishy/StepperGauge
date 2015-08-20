@@ -4,6 +4,7 @@ Open Source Stepper Gauge
 Wallace Chen
 */
 
+// overwrite me ifdef
 // adafruit stepper motor shield
 #include <Wire.h>
 #include <Adafruit_MotorShield.h>
@@ -28,13 +29,15 @@ int target_position = 0;
 int max_steps = 10;
 int min_steps = -10;  
 
-// overwrite me
+// overwrite me ifdef
 //abstract layer for stepper controls
 int step_up(int steps) {
      myMotor->step(steps, FORWARD, MICROSTEP);
    return steps;
 }
 
+// overwrite me ifdef
+//abstract layer for stepper controls
 int step_down(int steps) {
       myMotor->step(abs(steps), BACKWARD, MICROSTEP);
      return steps;
