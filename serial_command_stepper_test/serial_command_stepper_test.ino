@@ -25,6 +25,8 @@ Adafruit_StepperMotor *myMotor = AFMS.getStepper(200, 2);
 char direction = 's'; //stop 
 int stepper_position = 0;
 int target_position = 0;
+int max_steps = 200;
+int min_steps = 0;
 
 
 void setup() {
@@ -68,6 +70,11 @@ int update_step(int curr_position, int taget_position) {
 void loop() {
   if (Serial.available()) {
     target_position = Serial.parseInt(); //steps, positive in is forward
+    
+    //cut off target if out of bounds
+    if (target_position > max_steps) target_position = max_steps;
+    if (target_position < min_steps) target_position = min_steps;
+    
     stepper_position = update_step(stepper_position, target_position);
     lcd.clear();
     lcd.setCursor(0,0);
