@@ -23,8 +23,8 @@ Adafruit_StepperMotor *myMotor = AFMS.getStepper(200, 2);
 
 //todo: doc here
 char direction = 's'; //stop 
-int steps = 0;
-int to_step = 0;
+int stepper_position = 0;
+int target_position = 0;
 
 
 void setup() {
@@ -61,26 +61,16 @@ int do_step(int s) {
   }
 }
 
-int update_step(int curr_steps, int taget_steps) {
-  
+int update_step(int curr_position, int taget_position) {
+  return curr_position + do_step(target_position - curr_position);
 }
 
 void loop() {
   if (Serial.available()) {
-    to_step = Serial.parseInt(); //steps, positive in is forward
-    steps += do_step(to_step);
+    target_position = Serial.parseInt(); //steps, positive in is forward
+    stepper_position = update_step(stepper_position, target_position);
     lcd.clear();
     lcd.setCursor(0,0);
-    lcd.print(steps);
-//   if (to_step > 0) {
-//      steps += step_up(abs(to_step));
-//    lcd.setCursor(0,1);
-//    lcd.print(steps);
-//   }
-//   else if (to_step < 0) {
-//      steps -= step_down( abs( to_step));
-//    lcd.setCursor(0,1);
-//    lcd.print(steps);
-//   } 
+    lcd.print(stepper_position);
   }
-  }
+}
