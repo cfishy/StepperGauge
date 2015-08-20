@@ -25,24 +25,10 @@ Adafruit_StepperMotor *myMotor = AFMS.getStepper(200, 2);
 char direction = 's'; //stop 
 int stepper_position = 0;
 int target_position = 0;
-int max_steps = 200;
-int min_steps = 0;
+int max_steps = 10;
+int min_steps = -10;  
 
-
-void setup() {
-  Serial.begin(9600);           // set up Serial library at 9600 bps
-  
-  //stepper init
-  AFMS.begin();  // create with the default frequency 1.6KHz
-  myMotor->setSpeed(10);  // 10 rpm   
-  
-  //LCD init
-   lcd.begin(16, 2);               // start the library
-   lcd.setCursor(0,0);             // set the LCD cursor   position 
-   lcd.print("ready");
-   
-}
-
+// overwrite me
 //abstract layer for stepper controls
 int step_up(int steps) {
      myMotor->step(steps, FORWARD, MICROSTEP);
@@ -66,6 +52,23 @@ int do_step(int s) {
 int update_step(int curr_position, int taget_position) {
   return curr_position + do_step(target_position - curr_position);
 }
+
+
+
+void setup() {
+  Serial.begin(9600);           // set up Serial library at 9600 bps
+  
+  //stepper init
+  AFMS.begin();  // create with the default frequency 1.6KHz
+  myMotor->setSpeed(10);  // 10 rpm   
+  
+  //LCD init
+   lcd.begin(16, 2);               // start the library
+   lcd.setCursor(0,0);             // set the LCD cursor   position 
+   lcd.print("ready");
+   
+}
+
 
 void loop() {
   if (Serial.available()) {
