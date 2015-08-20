@@ -23,11 +23,12 @@ Adafruit_StepperMotor *myMotor = AFMS.getStepper(200, 2);
  LiquidCrystal lcd(8, 9, 4, 5, 6, 7);           // select the pins used on the LCD panel
 
 //todo: doc here
-char direction = 's'; //stop 
 int stepper_position = 0;
 int target_position = 0;
 int max_steps = 10;
 int min_steps = -10;  
+int max_input = 1024;
+int min_input = 0;
 
 // overwrite me ifdef
 //abstract layer for stepper controls
@@ -57,6 +58,22 @@ int update_step(int curr_position, int taget_position) {
 }
 
 
+// linear distribution of input to range of steps
+int get_position(int input) {
+  
+  // cut off if input is out of bounds
+  float steps_per_input = 0;
+  if (input < min_input) {
+    input = min_input;
+  } else if (input > max_input) {
+    input = max_input;
+  }
+  
+  // how many steps per one input increase? 
+  steps_per_input = (float)(max_steps - min_steps) / (float)(max_input - min_input);
+  return (int)(input * steps_per_input);
+}
+  
 
 void setup() {
   Serial.begin(9600);           // set up Serial library at 9600 bps
@@ -74,16 +91,23 @@ void setup() {
 
 
 void loop() {
+  int input = 0;
   if (Serial.available()) {
-    target_position = Serial.parseInt(); //steps, positive in is forward
+    input = Serial.parseInt(); //steps, positive in is forward
+    target_position = get_position(input);
     
-    //cut off target if out of bounds
-    if (target_position > max_steps) target_position = max_steps;
-    if (target_position < min_steps) target_position = min_steps;
-    
-    stepper_position = update_step(stepper_position, target_position);
+    //debug
     lcd.clear();
-    lcd.setCursor(0,0);
-    lcd.print(stepper_position);
+    lcd.setCursor(0, 1);
+    lcd.print(target_position);
+    
+    
+    //move the stepper
+    stepper_position = update_step(stepper_position, target_position);
+    
+    //display
+    //lcd.clear();
+//    lcd.setCursor(0,0);
+//    lcd.print(stepper_position);
   }
 }
