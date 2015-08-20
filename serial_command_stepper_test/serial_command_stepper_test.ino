@@ -48,16 +48,16 @@ int step_up(int steps) {
 }
 
 int step_down(int steps) {
-      myMotor->step(steps, BACKWARD, MICROSTEP);
+      myMotor->step(abs(steps), BACKWARD, MICROSTEP);
      return steps;
 }
 
-// s is steps, positive is forward, neg is backward
+// s positive is forward num of steps, neg is backward
 int do_step(int s) {
   if (s > 0) {
     return step_up(s);
   } else if (s < 0) {
-    return step_down(abs(s));
+    return step_down(s);
   }
 }
 
@@ -67,23 +67,20 @@ int update_step(int curr_steps, int taget_steps) {
 
 void loop() {
   if (Serial.available()) {
-    //direction = (char)Serial.read();
-    to_step = Serial.parseInt();
+    to_step = Serial.parseInt(); //steps, positive in is forward
+    steps += do_step(to_step);
+    lcd.clear();
     lcd.setCursor(0,0);
-   lcd.println(direction); 
-//   if (direction == 'F' or direction == 'f') {
-   if (to_step > 0) {
-  //myMotor->step(10, FORWARD, MICROSTEP);
-      steps += step_up(abs(to_step));
-  lcd.setCursor(0,1);
-  lcd.print(steps);
-   }
-//   else if (direction == 'B' or direction == 'b') {
-   else if (to_step < 0) {
-  //myMotor->step(10, BACKWARD, MICROSTEP);
-      steps -= step_down( abs( to_step));
-  lcd.setCursor(0,1);
-  lcd.print(steps);
-   } 
+    lcd.print(steps);
+//   if (to_step > 0) {
+//      steps += step_up(abs(to_step));
+//    lcd.setCursor(0,1);
+//    lcd.print(steps);
+//   }
+//   else if (to_step < 0) {
+//      steps -= step_down( abs( to_step));
+//    lcd.setCursor(0,1);
+//    lcd.print(steps);
+//   } 
   }
   }
