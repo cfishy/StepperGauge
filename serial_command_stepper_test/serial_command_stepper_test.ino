@@ -96,18 +96,16 @@ void loop() {
     input = Serial.parseInt(); //steps, positive in is forward
     target_position = get_position(input);
     
-    //debug
-    lcd.clear();
-    lcd.setCursor(0, 1);
-    lcd.print(target_position);
     
     
     //move the stepper
     stepper_position = update_step(stepper_position, target_position);
     
     //display
-    //lcd.clear();
-//    lcd.setCursor(0,0);
-//    lcd.print(stepper_position);
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print(input);
+    lcd.setCursor(0,1);
+    lcd.print(stepper_position);
   }
 }
