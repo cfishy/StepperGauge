@@ -1,6 +1,8 @@
 /* 
 Open Source Stepper Gauge 
 
+input number is int from serial should have no line ending, no NL no CR
+
 Wallace Chen
 */
 
@@ -33,14 +35,14 @@ int min_input = 0;
 // overwrite me ifdef
 //abstract layer for stepper controls
 int step_up(int steps) {
-     myMotor->step(steps, FORWARD, MICROSTEP);
+     myMotor->step(steps, BACKWARD, MICROSTEP);
    return steps;
 }
 
 // overwrite me ifdef
 //abstract layer for stepper controls
 int step_down(int steps) {
-      myMotor->step(abs(steps), BACKWARD, MICROSTEP);
+      myMotor->step(abs(steps), FORWARD, MICROSTEP);
      return steps;
 }
 
@@ -59,7 +61,7 @@ int update_step(int curr_position, int taget_position) {
 
 
 // linear distribution of input to range of steps
-int get_position(int input) {
+int get_position(float input) {
   
   // cut off if input is out of bounds
   float steps_per_input = 0;
@@ -91,12 +93,10 @@ void setup() {
 
 
 void loop() {
-  int input = 0;
+  float input = 0;
   if (Serial.available()) {
-    input = Serial.parseInt(); //steps, positive in is forward
+    input = Serial.parseFloat(); //steps, positive in is forward
     target_position = get_position(input);
-    
-    
     
     //move the stepper
     stepper_position = update_step(stepper_position, target_position);
